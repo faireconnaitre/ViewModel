@@ -1,17 +1,16 @@
 package cn.edu.myplayer.ui.fragment
 
-import android.graphics.Color
-import android.view.Gravity
 import android.view.View
-import android.widget.TextView
+import cn.edu.myplayer.R
 import cn.edu.myplayer.base.BaseFragment
 
 class MusicFragment: BaseFragment() {
     override fun initView(): View? {
-        val tv = TextView(context)
-        tv.gravity = Gravity.CENTER
-        tv.setTextColor(Color.RED)
-        tv.text = javaClass.simpleName
-        return tv
+        return View.inflate(context, R.layout.fragment_music, null)
+    }
+
+    override fun initData() {
+        //加载音乐列表数据
+
     }
 }
