@@ -160,7 +160,7 @@ class MusicFragment : BaseFragment() {
         adapter = MusicAdapter(context, null)
         listView.adapter = adapter
         //设置条目点击事件
-        listView.setOnItemClickListener { adapterView, view, i, _ ->
+        listView.setOnItemClickListener { adapterView, view, i, l ->
             //获取数据集合
             val cursor = adapter?.getItem(i) as Cursor
             //通过当前位置cursor获取整个播放列表
