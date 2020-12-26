@@ -18,8 +18,15 @@ abstract class BaseFragment: Fragment(), AnkoLogger{
         init()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
     //fragment初始化
-    protected fun init() {
+    open protected fun init() {
 
     }
 
