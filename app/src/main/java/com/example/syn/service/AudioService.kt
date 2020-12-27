@@ -1,9 +1,6 @@
 package com.example.syn.service
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -17,6 +14,7 @@ import com.example.syn.model.AudioBean
 import com.example.syn.ui.activity.AudioPlayerActivity
 import com.example.syn.ui.activity.MainActivity
 import de.greenrobot.event.EventBus
+import org.jetbrains.anko.notificationManager
 import java.util.*
 
 class AudioService: Service(){
@@ -31,6 +29,9 @@ class AudioService: Service(){
     val FROM_STATE= 3
     val FROM_CONTENT= 4
     val binder by lazy { AudioBinder() }
+
+    val Channel_ID = "my channel"
+    val Notification_ID = 1
 
     companion object {
         val MODE_ALL = 1
@@ -107,7 +108,6 @@ class AudioService: Service(){
                         }
                     }
                 }
-                //playitem
                 playItem()
             }
         }
@@ -167,10 +167,8 @@ class AudioService: Service(){
 //                    }
                     list?.let { position = (position + 1) % it.size }
                 }
-//                MODE_SINGLE->
                 MODE_RANDOM -> list?.let { position = Random().nextInt(it.size) }
             }
-
             playItem()
         }
 
@@ -265,20 +263,24 @@ class AudioService: Service(){
          */
         private fun getNotification(): Notification? {
             val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
-            val notification = NotificationCompat.Builder(this@AudioService)
-                .setTicker("正在播放歌曲${list?.get(position)?.display_name}")
-                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setLargeIcon(bitmap)
-//                .setContentTitle("北京")//通知标题
-//                .setContentText("汪峰")//通知内容
-                //自定义通知view
-                .setCustomContentView(getRemoteViews())
-                .setWhen(System.currentTimeMillis())
-                .setOngoing(true)//设置不能滑动删除通知
-                .setContentIntent(getPendingIntent())//通知栏主体点击事件
-                .build()
-            return notification
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                val notificationChannel = NotificationChannel(Channel_ID,"test",NotificationManager.IMPORTANCE_DEFAULT)
+                notificationManager.createNotificationChannel(notificationChannel)
+                val notification = NotificationCompat.Builder(this@AudioService,Channel_ID)
+                    .setTicker("正在播放歌曲${list?.get(position)?.display_name}")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setCustomContentView(getRemoteViews())
+                    .setWhen(System.currentTimeMillis())
+                    .setOngoing(true)//设置不能滑动删除通知
+                    .setContentIntent(getPendingIntent())//通知栏主体点击事件
+                    .build()
+                return notification
+            } else {
+                val notification = NotificationCompat.Builder(this@AudioService)
+                return notification as Notification
+            }
         }
+
         /**
          * 创建通知自定义view
          */
